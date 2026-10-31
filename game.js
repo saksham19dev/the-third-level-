@@ -247,7 +247,17 @@
     sideLeaderboardList: document.getElementById('side-leaderboard-list'),
     
     // Floating Notification
-    floatingAlert: document.getElementById('floating-alert')
+    floatingAlert: document.getElementById('floating-alert'),
+
+    // Enhanced UI Elements
+    crtOverlay: document.getElementById('crt-overlay'),
+    crtToggleBtn: document.getElementById('crt-toggle-btn'),
+    floatingNumbersContainer: document.getElementById('floating-numbers-container'),
+    resultRankBadge: document.getElementById('result-rank-badge'),
+    resultRankTitle: document.getElementById('result-rank-title'),
+    copyReportBtn: document.getElementById('copy-report-btn'),
+    clusterPing: document.getElementById('cluster-ping'),
+    trafficRate: document.getElementById('traffic-rate')
   };
 
   // --- INITIALIZATION ---
@@ -279,6 +289,7 @@
           <span class="pod-icon">🟢</span>
           <span class="pod-status-text">HEALTHY</span>
         </div>
+        <div class="pod-telemetry">CPU: 12%</div>
         <div class="pod-countdown-bar"></div>
         <svg class="hold-ring-svg" viewBox="0 0 54 54">
           <circle class="hold-ring-bg" cx="27" cy="27" r="22.5" />
@@ -303,7 +314,8 @@
         holdSvg: podEl.querySelector('.hold-ring-svg'),
         holdCircle: podEl.querySelector('.hold-ring-progress'),
         iconEl: podEl.querySelector('.pod-icon'),
-        statusTextEl: podEl.querySelector('.pod-status-text')
+        statusTextEl: podEl.querySelector('.pod-status-text'),
+        telemetryEl: podEl.querySelector('.pod-telemetry')
       });
     }
 
@@ -329,6 +341,7 @@
       pod.element.classList.remove('type-crash-loop');
       pod.subType = 'none';
       pod.restartCount = 0;
+      if (pod.telemetryEl) pod.telemetryEl.textContent = `CPU: ${Math.floor(5 + Math.random() * 18)}%`;
     } else if (newState === 'warning') {
       pod.warningSpawnTime = performance.now();
       pod.subType = subType;
@@ -339,6 +352,7 @@
         pod.statusTextEl.textContent = 'CRASH LOOP';
         pod.element.classList.add('type-crash-loop');
         pod.warningDuration = 2400; // Crash loop fails faster
+        if (pod.telemetryEl) pod.telemetryEl.textContent = `RESTART #${pod.restartCount}`;
         sound.playCrashLoop();
         logEvent(`🔄 ${pod.id} entered CrashLoopBackOff (Restart #${pod.restartCount})!`, 'warning');
       } else {
@@ -346,6 +360,7 @@
         pod.statusTextEl.textContent = 'HIGH CPU';
         pod.element.classList.remove('type-crash-loop');
         pod.warningDuration = WARNING_TO_RED_MS;
+        if (pod.telemetryEl) pod.telemetryEl.textContent = `CPU: ${Math.floor(85 + Math.random() * 14)}% ▲`;
         logEvent(`⚠️ ${pod.id} High CPU load detected (Memory Spike)`, 'warning');
       }
     } else if (newState === 'critical') {
@@ -356,12 +371,14 @@
         pod.statusTextEl.textContent = 'CRASHED';
       }
       pod.element.classList.remove('type-crash-loop');
+      if (pod.telemetryEl) pod.telemetryEl.textContent = 'EXIT 137';
     } else if (newState === 'ghost') {
       pod.iconEl.textContent = '👻';
       pod.statusTextEl.textContent = 'FALSE ALARM';
       pod.ghostExpiryTime = performance.now() + GHOST_DURATION_MS;
       pod.element.classList.remove('type-crash-loop');
       pod.subType = 'none';
+      if (pod.telemetryEl) pod.telemetryEl.textContent = 'PHANTOM';
     }
 
     updatePodMetricCounts();
@@ -632,6 +649,38 @@
   function applyScoreChange(delta) {
     state.score = Math.max(0, state.score + delta);
     dom.scoreVal.textContent = state.score.toLocaleString();
+    spawnFloatingNumber(delta);
+  }
+
+  function spawnFloatingNumber(delta) {
+    if (!dom.floatingNumbersContainer) return;
+    const el = document.createElement('div');
+    const sign = delta >= 0 ? '+' : '';
+    el.textContent = `${sign}${delta}`;
+
+    let colorClass = 'pts-green';
+    if (delta >= 500) colorClass = 'pts-gold';
+    else if (delta >= 200) colorClass = 'pts-purple';
+    else if (delta < 0) colorClass = 'pts-red';
+
+    el.className = `floating-number ${colorClass}`;
+
+    // Position near the score display or arena
+    if (dom.scoreVal) {
+      const rect = dom.scoreVal.getBoundingClientRect();
+      const posX = rect.left + rect.width / 2 + (Math.random() - 0.5) * 60;
+      const posY = rect.top + 10;
+      el.style.left = `${Math.max(20, posX)}px`;
+      el.style.top = `${Math.max(20, posY)}px`;
+    } else {
+      el.style.left = '50%';
+      el.style.top = '15%';
+    }
+
+    dom.floatingNumbersContainer.appendChild(el);
+    setTimeout(() => {
+      if (el.parentNode) el.remove();
+    }, 1200);
   }
 
   // --- SCRIPTED CHAOS EVENTS ---
@@ -781,7 +830,17 @@
       dom.autoscalerBtn.disabled = false;
     }
 
-    // 8. Dynamic Spawning
+    // 8. Telemetry Ribbon Dynamic Updates
+    if (dom.clusterPing && Math.random() < 0.15) {
+      const ping = Math.floor(10 + Math.random() * 8);
+      dom.clusterPing.textContent = `${ping}ms [OPTIMAL]`;
+    }
+    if (dom.trafficRate && Math.random() < 0.2) {
+      const rate = (1.2 + Math.random() * 0.6).toFixed(2);
+      dom.trafficRate.textContent = `▲ ${rate} GB/s`;
+    }
+
+    // 9. Dynamic Spawning
     if (now >= state.nextSpawnTime) {
       scheduleNextSpawn(now);
     }
@@ -933,6 +992,36 @@
     dom.resultMttr.textContent = avgMttr;
     dom.resultCombo.textContent = `${state.longestCombo}x`;
     dom.resultUptime.textContent = `${Math.min(100, Math.max(0, uptimePercent))}%`;
+
+    // Calculate Rank Badge
+    if (dom.resultRankBadge && dom.resultRankTitle) {
+      let rankText, titleText, rankCls;
+      if (state.score >= 5000) {
+        rankText = 'RANK S+';
+        titleText = 'LEGENDARY SRE PRINCIPAL';
+        rankCls = 'rank-s';
+      } else if (state.score >= 3500) {
+        rankText = 'RANK A';
+        titleText = 'SENIOR RELIABILITY ARCHITECT';
+        rankCls = 'rank-a';
+      } else if (state.score >= 2000) {
+        rankText = 'RANK B';
+        titleText = 'PRODUCTION SRE SPECIALIST';
+        rankCls = 'rank-b';
+      } else if (state.score >= 1000) {
+        rankText = 'RANK C';
+        titleText = 'JUNIOR INCIDENT RESPONDER';
+        rankCls = 'rank-c';
+      } else {
+        rankText = 'RANK D';
+        titleText = 'SRE APPRENTICE // PRACTICE MORE';
+        rankCls = 'rank-d';
+      }
+
+      dom.resultRankBadge.textContent = rankText;
+      dom.resultRankBadge.className = `result-rank-badge ${rankCls}`;
+      dom.resultRankTitle.textContent = titleText;
+    }
 
     dom.syncStatusBadge.textContent = 'Connecting to database...';
     dom.syncStatusBadge.className = 'sync-status-badge';
@@ -1166,6 +1255,66 @@
     dom.pauseBtn.addEventListener('click', () => {
       togglePause();
     });
+
+    // 9. CRT Scanline Toggle
+    if (dom.crtToggleBtn && dom.crtOverlay) {
+      dom.crtToggleBtn.addEventListener('click', () => {
+        sound.init();
+        sound.playClick();
+        dom.crtOverlay.classList.toggle('disabled');
+        const active = !dom.crtOverlay.classList.contains('disabled');
+        dom.crtToggleBtn.textContent = active ? '📺 CRT: ON' : '📺 CRT: OFF';
+      });
+    }
+
+    // 10. Quick Command Buttons in Terminal
+    document.querySelectorAll('.quick-cmd-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.init();
+        const cmd = btn.dataset.cmd || '';
+        if (dom.terminalInput) {
+          dom.terminalInput.value = cmd;
+          handleTerminalCommand();
+        }
+      });
+    });
+
+    // 11. Copy Incident Post-Mortem Report
+    if (dom.copyReportBtn) {
+      dom.copyReportBtn.addEventListener('click', () => {
+        sound.init();
+        sound.playClick();
+        const totalSaved = state.yellowResolvedCount + state.redResolvedCount;
+        let avgMttr = '0.0s';
+        if (state.recoveryTimes.length > 0) {
+          const sum = state.recoveryTimes.reduce((a, b) => a + b, 0);
+          avgMttr = `${((sum / state.recoveryTimes.length) / 1000).toFixed(2)}s`;
+        }
+
+        const report = [
+          `# 📋 SERVER SNIPER — INCIDENT POST-MORTEM`,
+          `**Operator:** ${state.playerHandle}`,
+          `**Final Score:** ${state.score.toLocaleString()} pts`,
+          `**Pods Remediated:** ${totalSaved} total`,
+          `• High CPU Resolved: ${state.highCpuResolvedCount}`,
+          `• CrashLoopBackOff Broken: ${state.crashLoopsResolvedCount}`,
+          `• Critical Crashes Rebooted: ${state.redResolvedCount}`,
+          `**MTTR (Mean Time to Recovery):** ${avgMttr}`,
+          `**Longest Combo Streak:** ${state.longestCombo}x`,
+          `**Ghost Alarm Traps Triggered:** ${state.falseAlarmsHit}`,
+          `---`,
+          `*Generated by Server Sniper (Chaos Edition) // Club Battle: Techverse*`
+        ].join('\n');
+
+        navigator.clipboard.writeText(report).then(() => {
+          dom.copyReportBtn.textContent = '✅ COPIED!';
+          setTimeout(() => { dom.copyReportBtn.textContent = '📋 COPY POST-MORTEM'; }, 2000);
+        }).catch(() => {
+          dom.copyReportBtn.textContent = '❌ COPY FAILED';
+          setTimeout(() => { dom.copyReportBtn.textContent = '📋 COPY POST-MORTEM'; }, 2000);
+        });
+      });
+    }
   }
 
   function togglePause() {

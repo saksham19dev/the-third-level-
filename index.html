@@ -8,6 +8,12 @@
 </head>
 <body>
 
+  <!-- Retro CRT Scanline & Curved Glass Overlay (Toggleable) -->
+  <div id="crt-overlay" class="crt-overlay"></div>
+
+  <!-- Floating Combat Numbers & Arcane Popups Container -->
+  <div id="floating-numbers-container" class="floating-numbers-container"></div>
+
   <!-- Floating Toast Notification -->
   <div id="floating-alert" class="floating-alert">SYSTEM ALERT</div>
 
@@ -27,12 +33,35 @@
       </div>
 
       <div class="header-actions">
+        <button id="crt-toggle-btn" class="icon-btn" title="Toggle retro CRT scanlines and terminal glow">📺 CRT: ON</button>
         <button id="pause-btn" class="icon-btn" title="Pause or Resume game (P / Esc)">⏸ Pause</button>
         <button id="mute-btn" class="icon-btn" title="Toggle audio on or off">🔊 Audio ON</button>
         <a href="leaderboard.html" target="_blank" class="icon-btn" title="Open audience monitor screen in new window">🖥️ Audience Screen</a>
       </div>
     </div>
   </header>
+
+  <!-- HIGH-TECH TELEMETRY STATUS RIBBON -->
+  <div class="telemetry-ribbon">
+    <div class="telemetry-item">
+      <span class="telemetry-beacon"></span>
+      <span class="telemetry-label">CLUSTER LINK:</span>
+      <strong id="cluster-ping" class="telemetry-val">12ms [OPTIMAL]</strong>
+    </div>
+    <div class="telemetry-item">
+      <span class="telemetry-label">INGRESS TRAFFIC:</span>
+      <strong id="traffic-rate" class="telemetry-val">▲ 1.42 GB/s</strong>
+    </div>
+    <div class="telemetry-item">
+      <span class="telemetry-label">NODE REPLICATION:</span>
+      <strong class="telemetry-val">36/36 SYNCED</strong>
+    </div>
+    <div class="telemetry-waveform-wrap">
+      <svg class="telemetry-waveform" viewBox="0 0 100 20" preserveAspectRatio="none">
+        <path d="M0,10 L15,10 L20,3 L25,18 L30,10 L50,10 L55,2 L60,17 L65,10 L80,10 L85,4 L90,16 L95,10 L100,10" fill="none" stroke="var(--neon-cyan)" stroke-width="1.5" />
+      </svg>
+    </div>
+  </div>
 
   <!-- HUD METRIC BARS -->
   <div class="hud-bar">
@@ -182,7 +211,12 @@
   <div id="terminal-overlay" class="terminal-overlay">
     <div class="terminal-box">
       <div class="terminal-topbar">
-        <span>EMERGENCY KUBERNETES TERMINAL</span>
+        <div class="terminal-window-dots">
+          <span class="term-dot dot-red"></span>
+          <span class="term-dot dot-yellow"></span>
+          <span class="term-dot dot-green"></span>
+        </div>
+        <span class="terminal-title">EMERGENCY KUBERNETES TERMINAL (BASH v5.2)</span>
         <button id="terminal-close-btn" class="icon-btn" style="padding: 2px 6px;">✕</button>
       </div>
       <div class="terminal-body">
@@ -195,6 +229,14 @@
           <span class="term-prompt">k8s-sre&gt;</span>
           <input type="text" id="terminal-input" class="term-input" placeholder="type 'kill' or 'fix' and hit enter" autocomplete="off" spellcheck="false">
         </div>
+        <!-- Quick execution buttons for fast clicking -->
+        <div class="quick-commands-row">
+          <span class="quick-cmd-label">FAST REMEDIATION:</span>
+          <button type="button" class="quick-cmd-btn" data-cmd="kill">kill -9</button>
+          <button type="button" class="quick-cmd-btn" data-cmd="fix">fix replica</button>
+          <button type="button" class="quick-cmd-btn" data-cmd="patch">patch k8s</button>
+          <button type="button" class="quick-cmd-btn" data-cmd="rollback">rollback</button>
+        </div>
         <div class="term-hint">Press ENTER to execute | ESC to abort</div>
       </div>
     </div>
@@ -202,36 +244,168 @@
 
   <!-- PRE-GAME START MODAL -->
   <div id="start-modal" class="modal-backdrop">
-    <div class="modal-card">
-      <h2>SERVER SNIPER</h2>
-      <div class="modal-sub">CHAOS EDITION // KUBERNETES SRE TRIAGE SIMULATOR</div>
-
-      <div class="input-group">
-        <label for="handle-input" class="input-label">OPERATOR CALLSIGN / HANDLE (3-12 CHARACTERS)</label>
-        <input type="text" id="handle-input" class="cyber-input" placeholder="e.g. ROOT_SNIPER" maxlength="12" autofocus>
+    <div class="modal-card start-modal-card">
+      <!-- Animated Title & Header -->
+      <div class="start-title-wrap">
+        <div class="start-logo-icon">☸️</div>
+        <h2 class="glitch-title" data-text="SERVER SNIPER">SERVER SNIPER</h2>
+        <div class="modal-sub">
+          <span class="edition-tag">CHAOS EDITION</span>
+          <span class="start-divider">//</span>
+          <span>KUBERNETES SRE TRIAGE SIMULATOR</span>
+        </div>
+        <div class="start-version-tag">TECHVERSE SRE ARENA v3.0</div>
       </div>
 
-      <div class="input-group">
-        <label class="input-label">SHIFT DURATION & TEMPO</label>
-        <div class="tempo-selector">
-          <button type="button" class="tempo-btn" data-sec="30">🚀 30s HYPER</button>
-          <button type="button" class="tempo-btn active" data-sec="45">⚡ 45s BLITZ</button>
-          <button type="button" class="tempo-btn" data-sec="60">🛡️ 60s STANDARD</button>
+      <!-- Operator Name & Tempo Selector -->
+      <div class="start-controls-grid">
+        <div class="input-group">
+          <label for="handle-input" class="input-label">
+            <span class="label-icon">👤</span> OPERATOR CALLSIGN
+          </label>
+          <input type="text" id="handle-input" class="cyber-input" placeholder="e.g. ROOT_SNIPER" maxlength="12" autofocus>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">
+            <span class="label-icon">⏱️</span> SHIFT DURATION
+          </label>
+          <div class="tempo-selector">
+            <button type="button" class="tempo-btn" data-sec="30">🚀 30s HYPER</button>
+            <button type="button" class="tempo-btn active" data-sec="45">⚡ 45s BLITZ</button>
+            <button type="button" class="tempo-btn" data-sec="60">🛡️ 60s STANDARD</button>
+          </div>
         </div>
       </div>
 
-      <button id="start-btn" class="primary-btn">INITIALIZE SHIFT</button>
+      <!-- Action Button -->
+      <button id="start-btn" class="primary-btn start-btn-enhanced">
+        <span class="btn-text">⚡ INITIALIZE SHIFT</span>
+        <span class="btn-pulse-ring"></span>
+      </button>
 
-      <div class="start-rules">
-        <strong>Mission Briefing:</strong>
-        <p style="margin-top: 4px;">
-          Keep production cluster health above 0% for 60 seconds.
-          <br>• Remediate <strong>High CPU (⚠️)</strong> and <strong>Crash Loops (🔄)</strong> via <span class="kbd-badge">S</span> or Load Balancer (+200 pts)
-          <br>• Hold click Red Pod 1.5s or double-click to type <span class="kbd-badge">kill</span> (+500 pts)
-          <br>• Press <span class="kbd-badge">A</span> for Autoscaler (clears all yellow/loop pods, 20s cooldown)
-          <br>• Beware of <strong>Ghost Pods (Cyan)</strong>: false alarms that dock 150 points!
-          <br>• Beware of <strong>T-45s Traffic Spike</strong> and <strong>T-20s Chaos Monkey</strong>!
-        </p>
+      <!-- INTERACTIVE REDESIGNED MISSION BRIEFING -->
+      <div class="mission-briefing">
+        <div class="briefing-header">
+          <div class="briefing-title-group">
+            <span class="briefing-icon">📋</span>
+            <span class="briefing-title">INCIDENT RESPONSE PROTOCOLS</span>
+          </div>
+          <span class="briefing-tip">💡 Keep cluster health &gt; 0% to survive!</span>
+        </div>
+
+        <!-- Interactive Protocol Cards Grid -->
+        <div class="briefing-cards">
+          <!-- Card 1: High CPU -->
+          <div class="briefing-card card-yellow" title="High CPU usage - scale pod or offload traffic">
+            <div class="card-badge yellow">WARNING</div>
+            <div class="card-header">
+              <span class="card-icon">⚠️</span>
+              <div>
+                <div class="card-title">High CPU Load</div>
+                <div class="card-subtitle">Memory Spike</div>
+              </div>
+            </div>
+            <div class="card-action">
+              <span class="action-label">REMEDY:</span>
+              <span class="kbd-badge">Hover + S</span> or <span class="kbd-badge">Drag Balancer</span>
+            </div>
+            <div class="card-footer">
+              <span class="reward-pill green">+200 PTS</span>
+              <span class="time-limit">⏱️ Degrades in 2.2s</span>
+            </div>
+          </div>
+
+          <!-- Card 2: CrashLoopBackOff -->
+          <div class="briefing-card card-orange" title="CrashLoopBackOff - repeated restart failure">
+            <div class="card-badge orange">RAPID FAIL</div>
+            <div class="card-header">
+              <span class="card-icon spinning-icon">🔄</span>
+              <div>
+                <div class="card-title">CrashLoopBackOff</div>
+                <div class="card-subtitle">Fast Degrade (2.4s)</div>
+              </div>
+            </div>
+            <div class="card-action">
+              <span class="action-label">REMEDY:</span>
+              <span class="kbd-badge">Hover + S</span> or <span class="kbd-badge">Drag Balancer</span>
+            </div>
+            <div class="card-footer">
+              <span class="reward-pill green">+200 PTS</span>
+              <span class="badge-sub">Auto Restart</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Critical Red Pod -->
+          <div class="briefing-card card-red" title="Critical Pod Crash - drains 5% cluster health per second!">
+            <div class="card-badge red">CRITICAL</div>
+            <div class="card-header">
+              <span class="card-icon">🔥</span>
+              <div>
+                <div class="card-title">Pod Deadlock</div>
+                <div class="card-subtitle">-5% Health / sec</div>
+              </div>
+            </div>
+            <div class="card-action">
+              <span class="action-label">REMEDY:</span>
+              <span class="kbd-badge">Hold Click 1s</span> or <span class="kbd-badge">Double-Click</span>
+            </div>
+            <div class="card-footer">
+              <span class="reward-pill gold">+500 PTS</span>
+              <span class="badge-sub">Execute 'kill'</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Ghost Pods / False Alarm -->
+          <div class="briefing-card card-cyan" title="Ghost Pod - False alarm telemetry anomaly">
+            <div class="card-badge cyan">FALSE ALARM</div>
+            <div class="card-header">
+              <span class="card-icon">👻</span>
+              <div>
+                <div class="card-title">Ghost Pods</div>
+                <div class="card-subtitle">Phantom Anomaly</div>
+              </div>
+            </div>
+            <div class="card-action alert-action">
+              <span class="action-label penalty-label">RULE:</span>
+              <strong>DO NOT TOUCH!</strong> Auto-expires in 1.8s
+            </div>
+            <div class="card-footer">
+              <span class="reward-pill red">-150 PTS</span>
+              <span class="badge-sub">Trap Node</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Power Tools & Chaos Chips Row -->
+        <div class="briefing-perks-row">
+          <div class="perk-card">
+            <span class="perk-icon">⚡</span>
+            <div class="perk-info">
+              <strong>Autoscaler Key <span class="kbd-badge">[A]</span>:</strong>
+              <span>Instantly clears all warning pods (12s cooldown)</span>
+            </div>
+          </div>
+          <div class="perk-card">
+            <span class="perk-icon">🔥</span>
+            <div class="perk-info">
+              <strong>2× Combo Frenzy:</strong>
+              <span>Solve 3 pods in 2s to activate 2× points for 5s!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scripted Chaos Alert Banners -->
+        <div class="briefing-alerts">
+          <div class="alert-chip spike">
+            <span class="alert-pulse"></span>
+            <span>🚨 <strong>T-75% Traffic Spike:</strong> 6 pods overload simultaneously</span>
+          </div>
+          <div class="alert-chip chaos">
+            <span class="alert-pulse"></span>
+            <span>💥 <strong>T-33% Chaos Monkey:</strong> 8 pods abruptly crash to red</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -244,6 +418,9 @@
   <!-- POST-GAME RESULT MODAL -->
   <div id="result-modal" class="modal-backdrop hidden">
     <div class="modal-card">
+      <div id="result-rank-badge" class="result-rank-badge">RANK S+</div>
+      <div id="result-rank-title" class="result-rank-title">LEGENDARY SITE RELIABILITY PRINCIPAL</div>
+
       <h2 id="result-title">SHIFT SURVIVED</h2>
       <div id="result-subtitle" class="modal-sub">60 seconds survived</div>
 
@@ -287,7 +464,10 @@
         <!-- Top 5 scores populated dynamically -->
       </div>
 
-      <button id="restart-btn" class="primary-btn">START NEXT SHIFT</button>
+      <div class="modal-actions-row">
+        <button id="restart-btn" class="primary-btn">START NEXT SHIFT</button>
+        <button id="copy-report-btn" type="button" class="secondary-btn" title="Copy incident post-mortem markdown report to clipboard">📋 COPY POST-MORTEM</button>
+      </div>
     </div>
   </div>
 
