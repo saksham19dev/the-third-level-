@@ -131,6 +131,173 @@
     }
   }
 
+  // --- INTERACTIVE DYNAMIC BACKGROUND (MOUSE PARTICLES & ENERGY MESH) ---
+  class InteractiveBackground {
+    constructor() {
+      this.canvas = document.getElementById('interactive-bg');
+      this.glow = document.getElementById('cursor-glow');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.particles = [];
+      this.sparks = [];
+      this.mouse = { x: -1000, y: -1000, active: false };
+      this.colors = ['#00e5ff', '#b537f2', '#00ff88', '#ffc400'];
+      this.numParticles = 50;
+
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate = this.animate.bind(this);
+      requestAnimationFrame(this.animate);
+    }
+
+    resize() {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+    }
+
+    createParticles() {
+      this.particles = [];
+      for (let i = 0; i < this.numParticles; i++) {
+        this.particles.push({
+          x: Math.random() * this.width,
+          y: Math.random() * this.height,
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: (Math.random() - 0.5) * 0.7,
+          radius: Math.random() * 2 + 1.2,
+          color: this.colors[Math.floor(Math.random() * this.colors.length)],
+          baseAlpha: Math.random() * 0.4 + 0.3
+        });
+      }
+    }
+
+    bindEvents() {
+      window.addEventListener('resize', () => {
+        this.resize();
+        this.createParticles();
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        this.mouse.x = e.clientX;
+        this.mouse.y = e.clientY;
+        this.mouse.active = true;
+        if (this.glow) {
+          this.glow.style.left = `${e.clientX}px`;
+          this.glow.style.top = `${e.clientY}px`;
+          this.glow.style.opacity = '1';
+        }
+      });
+
+      window.addEventListener('mouseleave', () => {
+        this.mouse.active = false;
+        if (this.glow) this.glow.style.opacity = '0';
+      });
+
+      window.addEventListener('click', (e) => {
+        this.spawnSparks(e.clientX, e.clientY);
+      });
+    }
+
+    spawnSparks(x, y) {
+      for (let i = 0; i < 12; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1.5;
+        this.sparks.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          radius: Math.random() * 2.5 + 1.5,
+          color: this.colors[Math.floor(Math.random() * this.colors.length)],
+          life: 1.0,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    animate() {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      // 1. Draw and update particles
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounce bounds
+        if (p.x < 0 || p.x > this.width) p.vx *= -1;
+        if (p.y < 0 || p.y > this.height) p.vy *= -1;
+
+        // Mouse interactive reaction (subtle magnetic interaction)
+        if (this.mouse.active) {
+          const dx = this.mouse.x - p.x;
+          const dy = this.mouse.y - p.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 160) {
+            // Interactive glowing connection line to cursor
+            const alpha = (1 - dist / 160) * 0.65;
+            this.ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.moveTo(p.x, p.y);
+            this.ctx.lineTo(this.mouse.x, this.mouse.y);
+            this.ctx.stroke();
+
+            // Gentle drift toward mouse
+            p.x += (dx / dist) * 0.35;
+            p.y += (dy / dist) * 0.35;
+          }
+        }
+
+        // Draw particle dot with glow
+        this.ctx.fillStyle = p.color;
+        this.ctx.globalAlpha = p.baseAlpha;
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+
+      // 2. Draw connections between close nodes
+      for (let i = 0; i < this.particles.length; i++) {
+        for (let j = i + 1; j < this.particles.length; j++) {
+          const p1 = this.particles[i];
+          const p2 = this.particles[j];
+          const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+          if (dist < 110) {
+            const alpha = (1 - dist / 110) * 0.22;
+            this.ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
+            this.ctx.lineWidth = 0.8;
+            this.ctx.beginPath();
+            this.ctx.moveTo(p1.x, p1.y);
+            this.ctx.lineTo(p2.x, p2.y);
+            this.ctx.stroke();
+          }
+        }
+      }
+
+      // 3. Draw & update click sparks
+      for (let i = this.sparks.length - 1; i >= 0; i--) {
+        const s = this.sparks[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.life -= s.decay;
+        if (s.life <= 0) {
+          this.sparks.splice(i, 1);
+          continue;
+        }
+        this.ctx.fillStyle = s.color;
+        this.ctx.globalAlpha = s.life;
+        this.ctx.beginPath();
+        this.ctx.arc(s.x, s.y, s.radius * s.life, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+
+      this.ctx.globalAlpha = 1.0;
+      requestAnimationFrame(this.animate);
+    }
+  }
+
   // --- GAME CONSTANTS & CONFIGURATION (ACCELERATED FAST PACING) ---
   const DEFAULT_ROUND_DURATION_SEC = 45; // Fast 45s Blitz default
   const TICK_INTERVAL_MS = 100; // 10 ticks per second
@@ -262,6 +429,7 @@
 
   // --- INITIALIZATION ---
   function init() {
+    new InteractiveBackground();
     createPodGrid();
     setupEventListeners();
     setupLeaderboardWatcher();

@@ -38,23 +38,59 @@
 }
 
 body {
-  background-color: #0b1124;
+  background-color: #070d1e;
   background-image: 
-    radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.18) 0%, transparent 40%),
-    radial-gradient(circle at 85% 20%, rgba(181, 55, 242, 0.22) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 0%, rgba(0, 255, 136, 0.16) 0%, transparent 60%),
-    radial-gradient(circle at 50% 90%, rgba(13, 37, 74, 0.7) 0%, transparent 60%),
-    linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 28px 28px, 28px 28px;
-  background-attachment: fixed;
+    linear-gradient(135deg, rgba(8, 16, 38, 0.94), rgba(12, 24, 58, 0.94), rgba(9, 18, 44, 0.94)),
+    linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 30px 30px, 30px 30px;
   color: var(--text-main);
-  font-family: var(--font-mono);
+  font-family: var(--font-tech), sans-serif;
+  font-size: 15px;
+  font-weight: 400;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* ==========================================================================
+   INTERACTIVE CANVAS BACKGROUND & MOUSE SPOTLIGHT
+   ========================================================================== */
+
+.interactive-bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cursor-glow {
+  position: fixed;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at center, rgba(0, 229, 255, 0.18) 0%, rgba(181, 55, 242, 0.12) 35%, rgba(0, 255, 136, 0.05) 55%, transparent 70%);
+  z-index: 1;
+  mix-blend-mode: screen;
+  transition: opacity 0.3s ease;
+  will-change: left, top;
+}
+
+/* Ensure UI elements sit above interactive background */
+header, .telemetry-ribbon, .hud-bar, main {
+  position: relative;
+  z-index: 10;
+}
+
+.modal-backdrop {
+  z-index: 200;
 }
 
 /* ==========================================================================
