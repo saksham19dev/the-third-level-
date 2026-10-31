@@ -261,60 +261,93 @@
       <div class="input-group">
         <label class="input-label">SHIFT DURATION & TEMPO</label>
         <div class="tempo-selector">
-          <button type="button" class="tempo-btn" data-sec="30">🚀 30s HYPER</button>
-          <button type="button" class="tempo-btn active" data-sec="45">⚡ 45s BLITZ</button>
-          <button type="button" class="tempo-btn" data-sec="60">🛡️ 60s STANDARD</button>
+          <button type="button" class="tempo-btn" data-sec="30">
+            <span class="symbol-anim rocket-pulse">🚀</span> 30s HYPER
+          </button>
+          <button type="button" class="tempo-btn active" data-sec="45">
+            <span class="symbol-anim bolt-pulse">⚡</span> 45s BLITZ
+          </button>
+          <button type="button" class="tempo-btn" data-sec="60">
+            <span class="symbol-anim shield-pulse">🛡️</span> 60s STANDARD
+          </button>
         </div>
       </div>
 
       <button id="start-btn" class="primary-btn">INITIALIZE SHIFT</button>
 
-      <!-- Clean & Sleek Redesigned Mission Briefing -->
+      <!-- Post-wise Interactive Mission Briefing -->
       <div class="start-rules-box">
         <div class="rules-header">
-          <span class="rules-header-title">MISSION BRIEFING</span>
-          <span class="rules-header-sub">Keep Cluster Health &gt; 0%</span>
+          <span class="rules-header-title">INCIDENT DIRECTORY</span>
+          <span class="rules-header-sub">Cluster SLA &gt; 0%</span>
         </div>
-        <ul class="rules-list">
-          <li class="rule-item">
-            <span class="rule-bullet yellow">⚠️</span>
-            <div class="rule-text">
-              <strong>High CPU & Crash Loops (🔄):</strong>
-              Hover + <span class="kbd-badge">S</span> or Drag Balancer
-              <span class="pts-pill green">+200 PTS</span>
+
+        <div class="rules-posts-grid">
+          <!-- Post 1: Warning & Crash Loops -->
+          <div class="rule-post post-warning" tabindex="0">
+            <div class="post-top">
+              <span class="post-tag yellow">INCIDENT #01</span>
+              <span class="post-reward green">+200 pts</span>
             </div>
-          </li>
-          <li class="rule-item">
-            <span class="rule-bullet red">🔥</span>
-            <div class="rule-text">
-              <strong>Critical Crashed Pods:</strong>
-              Hold click <span class="kbd-badge">1.0s</span> or double-click to type <span class="kbd-badge">kill</span>
-              <span class="pts-pill gold">+500 PTS</span>
+            <div class="post-main">
+              <span class="post-icon">⚠️</span>
+              <div class="post-content">
+                <div class="post-title">High CPU & Crash Loops (🔄)</div>
+                <div class="post-action">Hover pod + press <span class="kbd-badge">S</span> or drag Balancer</div>
+              </div>
             </div>
-          </li>
-          <li class="rule-item">
-            <span class="rule-bullet purple">⚡</span>
-            <div class="rule-text">
-              <strong>Autoscaler:</strong>
-              Press key <span class="kbd-badge">A</span> to clear all warning pods <em>(12s cooldown)</em>
+          </div>
+
+          <!-- Post 2: Critical Pod Crash -->
+          <div class="rule-post post-critical" tabindex="0">
+            <div class="post-top">
+              <span class="post-tag red">INCIDENT #02</span>
+              <span class="post-reward gold">+500 pts</span>
             </div>
-          </li>
-          <li class="rule-item">
-            <span class="rule-bullet cyan">👻</span>
-            <div class="rule-text">
-              <strong>Ghost Pods (False Alarm):</strong>
-              <strong style="color: var(--neon-cyan);">DO NOT TOUCH!</strong> Auto-expires in 1.8s
-              <span class="pts-pill red">-150 PTS</span>
+            <div class="post-main">
+              <span class="post-icon">🔥</span>
+              <div class="post-content">
+                <div class="post-title">Critical Crashed Pods</div>
+                <div class="post-action">Hold click <span class="kbd-badge">1.0s</span> or double-click to type kill</div>
+              </div>
             </div>
-          </li>
-          <li class="rule-item">
-            <span class="rule-bullet orange">🚨</span>
-            <div class="rule-text">
-              <strong>Scripted Chaos:</strong>
-              Survive <strong>Traffic Spike</strong> (T-75%) & <strong>Chaos Monkey</strong> (T-33%)!
+          </div>
+
+          <!-- Post 3: Autoscaler Ability -->
+          <div class="rule-post post-ability" tabindex="0">
+            <div class="post-top">
+              <span class="post-tag purple">SRE TOOL</span>
+              <span class="post-reward purple">12s Cooldown</span>
             </div>
-          </li>
-        </ul>
+            <div class="post-main">
+              <span class="post-icon">⚡</span>
+              <div class="post-content">
+                <div class="post-title">Autoscaler Sweep</div>
+                <div class="post-action">Press key <span class="kbd-badge">A</span> to scale all warning pods</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 4: Ghost Pods -->
+          <div class="rule-post post-danger" tabindex="0">
+            <div class="post-top">
+              <span class="post-tag cyan">FALSE ALARM</span>
+              <span class="post-reward red">-150 pts</span>
+            </div>
+            <div class="post-main">
+              <span class="post-icon">👻</span>
+              <div class="post-content">
+                <div class="post-title">Ghost Pod Telemetry</div>
+                <div class="post-action">Do not click! Auto-expires peacefully in 1.8s</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scripted-chaos-post">
+          <span class="chaos-icon">🚨</span>
+          <span class="chaos-text">Scripted Chaos: Traffic Spike at T-75% &amp; Chaos Monkey at T-33%</span>
+        </div>
       </div>
     </div>
   </div>
