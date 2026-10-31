@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Server Sniper (Chaos Edition) // Kubernetes SRE Simulator</title>
+  <!-- Google Fonts: Orbitron (Display/Headers) & Rajdhani (Tech Body) & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -245,167 +249,72 @@
   <!-- PRE-GAME START MODAL -->
   <div id="start-modal" class="modal-backdrop">
     <div class="modal-card start-modal-card">
-      <!-- Animated Title & Header -->
-      <div class="start-title-wrap">
-        <div class="start-logo-icon">☸️</div>
-        <h2 class="glitch-title" data-text="SERVER SNIPER">SERVER SNIPER</h2>
-        <div class="modal-sub">
-          <span class="edition-tag">CHAOS EDITION</span>
-          <span class="start-divider">//</span>
-          <span>KUBERNETES SRE TRIAGE SIMULATOR</span>
-        </div>
-        <div class="start-version-tag">TECHVERSE SRE ARENA v3.0</div>
+      <div class="start-header-badge">☸️ TECHVERSE // SRE ARENA</div>
+      <h2 class="start-title">SERVER SNIPER</h2>
+      <div class="modal-sub">CHAOS EDITION <span class="cyan-divider">//</span> KUBERNETES SRE TRIAGE SIMULATOR</div>
+
+      <div class="input-group">
+        <label for="handle-input" class="input-label">OPERATOR CALLSIGN / HANDLE (3-12 CHARACTERS)</label>
+        <input type="text" id="handle-input" class="cyber-input" placeholder="e.g. ROOT_SNIPER" maxlength="12" autofocus>
       </div>
 
-      <!-- Operator Name & Tempo Selector -->
-      <div class="start-controls-grid">
-        <div class="input-group">
-          <label for="handle-input" class="input-label">
-            <span class="label-icon">👤</span> OPERATOR CALLSIGN
-          </label>
-          <input type="text" id="handle-input" class="cyber-input" placeholder="e.g. ROOT_SNIPER" maxlength="12" autofocus>
-        </div>
-
-        <div class="input-group">
-          <label class="input-label">
-            <span class="label-icon">⏱️</span> SHIFT DURATION
-          </label>
-          <div class="tempo-selector">
-            <button type="button" class="tempo-btn" data-sec="30">🚀 30s HYPER</button>
-            <button type="button" class="tempo-btn active" data-sec="45">⚡ 45s BLITZ</button>
-            <button type="button" class="tempo-btn" data-sec="60">🛡️ 60s STANDARD</button>
-          </div>
+      <div class="input-group">
+        <label class="input-label">SHIFT DURATION & TEMPO</label>
+        <div class="tempo-selector">
+          <button type="button" class="tempo-btn" data-sec="30">🚀 30s HYPER</button>
+          <button type="button" class="tempo-btn active" data-sec="45">⚡ 45s BLITZ</button>
+          <button type="button" class="tempo-btn" data-sec="60">🛡️ 60s STANDARD</button>
         </div>
       </div>
 
-      <!-- Action Button -->
-      <button id="start-btn" class="primary-btn start-btn-enhanced">
-        <span class="btn-text">⚡ INITIALIZE SHIFT</span>
-        <span class="btn-pulse-ring"></span>
-      </button>
+      <button id="start-btn" class="primary-btn">INITIALIZE SHIFT</button>
 
-      <!-- INTERACTIVE REDESIGNED MISSION BRIEFING -->
-      <div class="mission-briefing">
-        <div class="briefing-header">
-          <div class="briefing-title-group">
-            <span class="briefing-icon">📋</span>
-            <span class="briefing-title">INCIDENT RESPONSE PROTOCOLS</span>
-          </div>
-          <span class="briefing-tip">💡 Keep cluster health &gt; 0% to survive!</span>
+      <!-- Clean & Sleek Redesigned Mission Briefing -->
+      <div class="start-rules-box">
+        <div class="rules-header">
+          <span class="rules-header-title">MISSION BRIEFING</span>
+          <span class="rules-header-sub">Keep Cluster Health &gt; 0%</span>
         </div>
-
-        <!-- Interactive Protocol Cards Grid -->
-        <div class="briefing-cards">
-          <!-- Card 1: High CPU -->
-          <div class="briefing-card card-yellow" title="High CPU usage - scale pod or offload traffic">
-            <div class="card-badge yellow">WARNING</div>
-            <div class="card-header">
-              <span class="card-icon">⚠️</span>
-              <div>
-                <div class="card-title">High CPU Load</div>
-                <div class="card-subtitle">Memory Spike</div>
-              </div>
+        <ul class="rules-list">
+          <li class="rule-item">
+            <span class="rule-bullet yellow">⚠️</span>
+            <div class="rule-text">
+              <strong>High CPU & Crash Loops (🔄):</strong>
+              Hover + <span class="kbd-badge">S</span> or Drag Balancer
+              <span class="pts-pill green">+200 PTS</span>
             </div>
-            <div class="card-action">
-              <span class="action-label">REMEDY:</span>
-              <span class="kbd-badge">Hover + S</span> or <span class="kbd-badge">Drag Balancer</span>
+          </li>
+          <li class="rule-item">
+            <span class="rule-bullet red">🔥</span>
+            <div class="rule-text">
+              <strong>Critical Crashed Pods:</strong>
+              Hold click <span class="kbd-badge">1.0s</span> or double-click to type <span class="kbd-badge">kill</span>
+              <span class="pts-pill gold">+500 PTS</span>
             </div>
-            <div class="card-footer">
-              <span class="reward-pill green">+200 PTS</span>
-              <span class="time-limit">⏱️ Degrades in 2.2s</span>
+          </li>
+          <li class="rule-item">
+            <span class="rule-bullet purple">⚡</span>
+            <div class="rule-text">
+              <strong>Autoscaler:</strong>
+              Press key <span class="kbd-badge">A</span> to clear all warning pods <em>(12s cooldown)</em>
             </div>
-          </div>
-
-          <!-- Card 2: CrashLoopBackOff -->
-          <div class="briefing-card card-orange" title="CrashLoopBackOff - repeated restart failure">
-            <div class="card-badge orange">RAPID FAIL</div>
-            <div class="card-header">
-              <span class="card-icon spinning-icon">🔄</span>
-              <div>
-                <div class="card-title">CrashLoopBackOff</div>
-                <div class="card-subtitle">Fast Degrade (2.4s)</div>
-              </div>
+          </li>
+          <li class="rule-item">
+            <span class="rule-bullet cyan">👻</span>
+            <div class="rule-text">
+              <strong>Ghost Pods (False Alarm):</strong>
+              <strong style="color: var(--neon-cyan);">DO NOT TOUCH!</strong> Auto-expires in 1.8s
+              <span class="pts-pill red">-150 PTS</span>
             </div>
-            <div class="card-action">
-              <span class="action-label">REMEDY:</span>
-              <span class="kbd-badge">Hover + S</span> or <span class="kbd-badge">Drag Balancer</span>
+          </li>
+          <li class="rule-item">
+            <span class="rule-bullet orange">🚨</span>
+            <div class="rule-text">
+              <strong>Scripted Chaos:</strong>
+              Survive <strong>Traffic Spike</strong> (T-75%) & <strong>Chaos Monkey</strong> (T-33%)!
             </div>
-            <div class="card-footer">
-              <span class="reward-pill green">+200 PTS</span>
-              <span class="badge-sub">Auto Restart</span>
-            </div>
-          </div>
-
-          <!-- Card 3: Critical Red Pod -->
-          <div class="briefing-card card-red" title="Critical Pod Crash - drains 5% cluster health per second!">
-            <div class="card-badge red">CRITICAL</div>
-            <div class="card-header">
-              <span class="card-icon">🔥</span>
-              <div>
-                <div class="card-title">Pod Deadlock</div>
-                <div class="card-subtitle">-5% Health / sec</div>
-              </div>
-            </div>
-            <div class="card-action">
-              <span class="action-label">REMEDY:</span>
-              <span class="kbd-badge">Hold Click 1s</span> or <span class="kbd-badge">Double-Click</span>
-            </div>
-            <div class="card-footer">
-              <span class="reward-pill gold">+500 PTS</span>
-              <span class="badge-sub">Execute 'kill'</span>
-            </div>
-          </div>
-
-          <!-- Card 4: Ghost Pods / False Alarm -->
-          <div class="briefing-card card-cyan" title="Ghost Pod - False alarm telemetry anomaly">
-            <div class="card-badge cyan">FALSE ALARM</div>
-            <div class="card-header">
-              <span class="card-icon">👻</span>
-              <div>
-                <div class="card-title">Ghost Pods</div>
-                <div class="card-subtitle">Phantom Anomaly</div>
-              </div>
-            </div>
-            <div class="card-action alert-action">
-              <span class="action-label penalty-label">RULE:</span>
-              <strong>DO NOT TOUCH!</strong> Auto-expires in 1.8s
-            </div>
-            <div class="card-footer">
-              <span class="reward-pill red">-150 PTS</span>
-              <span class="badge-sub">Trap Node</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Power Tools & Chaos Chips Row -->
-        <div class="briefing-perks-row">
-          <div class="perk-card">
-            <span class="perk-icon">⚡</span>
-            <div class="perk-info">
-              <strong>Autoscaler Key <span class="kbd-badge">[A]</span>:</strong>
-              <span>Instantly clears all warning pods (12s cooldown)</span>
-            </div>
-          </div>
-          <div class="perk-card">
-            <span class="perk-icon">🔥</span>
-            <div class="perk-info">
-              <strong>2× Combo Frenzy:</strong>
-              <span>Solve 3 pods in 2s to activate 2× points for 5s!</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Scripted Chaos Alert Banners -->
-        <div class="briefing-alerts">
-          <div class="alert-chip spike">
-            <span class="alert-pulse"></span>
-            <span>🚨 <strong>T-75% Traffic Spike:</strong> 6 pods overload simultaneously</span>
-          </div>
-          <div class="alert-chip chaos">
-            <span class="alert-pulse"></span>
-            <span>💥 <strong>T-33% Chaos Monkey:</strong> 8 pods abruptly crash to red</span>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
