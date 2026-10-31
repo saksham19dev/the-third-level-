@@ -3,57 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Server Sniper (Chaos Edition) // Kubernetes SRE Simulator</title>
-  <!-- Google Fonts: Orbitron (Display/Headers) & Rajdhani (Tech Body) & JetBrains Mono -->
+  <title>Server Sniper // Kubernetes SRE Incident Command Center</title>
+  
+  <!-- High-Tech DevOps Web Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="devops-theme">
 
-  <!-- Interactive Dynamic Background Canvas & Mouse Glow -->
+  <!-- Interactive DevOps Topology Canvas & Ambient Reactive Aura -->
   <canvas id="interactive-bg" class="interactive-bg-canvas"></canvas>
   <div id="cursor-glow" class="cursor-glow"></div>
 
-  <!-- Retro CRT Scanline & Curved Glass Overlay (Toggleable) -->
+  <!-- Retro CRT Scanline Overlay (Toggleable) -->
   <div id="crt-overlay" class="crt-overlay"></div>
 
-  <!-- Floating Combat Numbers & Arcane Popups Container -->
+  <!-- Arcade Floating Score Numbers Container -->
   <div id="floating-numbers-container" class="floating-numbers-container"></div>
 
-  <!-- Floating Toast Notification -->
-  <div id="floating-alert" class="floating-alert">SYSTEM ALERT</div>
+  <!-- Floating Toast Notification System -->
+  <div id="floating-alert" class="floating-alert">
+    <span class="alert-icon">⚡</span>
+    <span id="floating-alert-text">CLUSTER ONLINE</span>
+  </div>
 
-  <!-- HEADER -->
-  <header>
-    <div class="brand">
-      <svg class="brand-icon" viewBox="0 0 24 24">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-      </svg>
-      <h1>SERVER SNIPER <span class="badge">CHAOS ED.</span></h1>
+  <!-- TOP DEVOPS NAVIGATION & NOC COMMAND HEADER -->
+  <header class="noc-header">
+    <div class="brand-group">
+      <div class="k8s-logo-wrap">
+        <svg class="k8s-wheel-icon" viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">
+          <h1>SERVER SNIPER</h1>
+          <span class="cluster-badge">CHAOS ED.</span>
+        </div>
+        <div class="brand-sub">KUBERNETES SRE INCIDENT RESPONSE // TECHVERSE</div>
+      </div>
     </div>
 
-    <div class="header-meta">
-      <div class="player-badge">
-        <span>OPERATOR:</span>
+    <!-- Cluster Operational Status -->
+    <div class="header-center-telemetry">
+      <div class="cluster-region-pill">
+        <span class="status-dot pulsing"></span>
+        <span class="region-label">CLUSTER:</span>
+        <strong class="region-name">k8s-prod-us-east-1</strong>
+      </div>
+      <div class="operator-callsign-pill">
+        <span class="op-icon">👤</span>
+        <span class="op-label">OPERATOR:</span>
         <strong id="player-handle-display">UNASSIGNED</strong>
       </div>
+    </div>
 
-      <div class="header-actions">
-        <button id="crt-toggle-btn" class="icon-btn" title="Toggle retro CRT scanlines and terminal glow">📺 CRT: ON</button>
-        <button id="pause-btn" class="icon-btn" title="Pause or Resume game (P / Esc)">⏸ Pause</button>
-        <button id="mute-btn" class="icon-btn" title="Toggle audio on or off">🔊 Audio ON</button>
-        <a href="leaderboard.html" target="_blank" class="icon-btn" title="Open audience monitor screen in new window">🖥️ Audience Screen</a>
-      </div>
+    <!-- SRE Action Controls -->
+    <div class="header-actions">
+      <button id="crt-toggle-btn" class="noc-btn" title="Toggle retro CRT scanlines (CRT)">
+        <span class="btn-icon">📺</span> <span class="btn-txt">CRT: ON</span>
+      </button>
+      <button id="pause-btn" class="noc-btn" title="Pause or Resume game (P / Esc)">
+        <span class="btn-icon">⏸</span> <span class="btn-txt">Pause</span>
+      </button>
+      <button id="mute-btn" class="noc-btn" title="Toggle audio sound FX">
+        <span class="btn-icon">🔊</span> <span class="btn-txt">Audio ON</span>
+      </button>
+      <a href="leaderboard.html" target="_blank" class="noc-btn audience-link" title="Open audience monitor screen in new window">
+        <span class="btn-icon">🖥️</span> <span class="btn-txt">Audience NOC</span>
+      </a>
     </div>
   </header>
 
-  <!-- HIGH-TECH TELEMETRY STATUS RIBBON -->
+  <!-- LIVE TELEMETRY & OBSERVABILITY RIBBON -->
   <div class="telemetry-ribbon">
     <div class="telemetry-item">
       <span class="telemetry-beacon"></span>
-      <span class="telemetry-label">CLUSTER LINK:</span>
+      <span class="telemetry-label">CONTROL PLANE PING:</span>
       <strong id="cluster-ping" class="telemetry-val">12ms [OPTIMAL]</strong>
     </div>
     <div class="telemetry-item">
@@ -61,161 +89,198 @@
       <strong id="traffic-rate" class="telemetry-val">▲ 1.42 GB/s</strong>
     </div>
     <div class="telemetry-item">
-      <span class="telemetry-label">NODE REPLICATION:</span>
+      <span class="telemetry-label">CONTAINER SYNC:</span>
       <strong class="telemetry-val">36/36 SYNCED</strong>
     </div>
     <div class="telemetry-waveform-wrap">
-      <svg class="telemetry-waveform" viewBox="0 0 100 20" preserveAspectRatio="none">
-        <path d="M0,10 L15,10 L20,3 L25,18 L30,10 L50,10 L55,2 L60,17 L65,10 L80,10 L85,4 L90,16 L95,10 L100,10" fill="none" stroke="var(--neon-cyan)" stroke-width="1.5" />
+      <span class="waveform-label">NETWORK ECG:</span>
+      <svg class="telemetry-waveform" viewBox="0 0 120 20" preserveAspectRatio="none">
+        <path d="M0,10 L15,10 L20,3 L25,18 L30,10 L50,10 L55,2 L60,17 L65,10 L80,10 L85,4 L90,16 L95,10 L120,10" fill="none" stroke="var(--neon-cyan)" stroke-width="1.6" />
       </svg>
     </div>
   </div>
 
-  <!-- HUD METRIC BARS -->
+  <!-- GRAFANA-STYLE HUD METRIC DASHBOARD -->
   <div class="hud-bar">
-    <!-- Health Bar -->
-    <div class="hud-card">
-      <div class="hud-title">
-        <span>CLUSTER HEALTH</span>
-        <span id="system-health-val" style="color: var(--neon-green);">100%</span>
+    <!-- Health / SLA Gauge -->
+    <div class="hud-widget widget-health">
+      <div class="widget-header">
+        <span class="widget-title">CLUSTER SLA HEALTH</span>
+        <span id="system-health-val" class="health-numeric">100%</span>
       </div>
       <div class="health-meter-container">
         <div id="health-meter-fill" class="health-meter-fill"></div>
       </div>
+      <div class="widget-sub">Critical threshold: &lt; 30% drains score</div>
     </div>
 
-    <!-- Timer -->
-    <div class="hud-card">
-      <div class="hud-title">SHIFT COUNTDOWN</div>
-      <div class="hud-value-row">
-        <span id="time-remaining" class="hud-val">45s</span>
-        <span id="total-time-badge" style="font-size: 0.7rem; color: var(--text-dim);">45s TOTAL</span>
+    <!-- Countdown Timer -->
+    <div class="hud-widget widget-timer">
+      <div class="widget-header">
+        <span class="widget-title">SHIFT COUNTDOWN</span>
+        <span id="total-time-badge" class="badge-mini">45s TOTAL</span>
       </div>
+      <div class="widget-value-display">
+        <span id="time-remaining" class="hud-val timer-val">45s</span>
+      </div>
+      <div class="widget-sub">Hold line until shift concludes</div>
     </div>
 
     <!-- Score & Multiplier -->
-    <div class="hud-card">
-      <div class="hud-title">
-        <span>UPTIME SCORE</span>
+    <div class="hud-widget widget-score">
+      <div class="widget-header">
+        <span class="widget-title">UPTIME SCORE</span>
         <span id="combo-badge" class="combo-badge">🔥 2X COMBO (<span id="combo-timer-val">5.0s</span>)</span>
       </div>
-      <div class="hud-value-row">
-        <span id="score-val" class="hud-val" style="color: var(--neon-cyan);">0</span>
-        <span style="font-size: 0.7rem; color: var(--text-dim);">PTS</span>
+      <div class="widget-value-display">
+        <span id="score-val" class="hud-val score-val">0</span>
+        <span class="score-unit">PTS</span>
       </div>
+      <div class="widget-sub">+50/s SLA Bonus (Health &ge; 80%)</div>
     </div>
 
-    <!-- Cluster Node Breakdown -->
-    <div class="hud-card">
-      <div class="hud-title">ACTIVE POD BREAKDOWN</div>
-      <div style="display: flex; gap: 8px; margin-top: 4px;">
-        <span class="metric-pill green">🟢 <strong id="healthy-count">36</strong></span>
-        <span class="metric-pill yellow">⚠️ <strong id="warning-count">0</strong></span>
-        <span class="metric-pill red">🔥 <strong id="critical-count">0</strong></span>
+    <!-- Active Node Pod Breakdown -->
+    <div class="hud-widget widget-nodes">
+      <div class="widget-header">
+        <span class="widget-title">POD CLUSTER STATUS</span>
+        <span class="total-pods-badge">36 Managed</span>
       </div>
+      <div class="metric-pill-row">
+        <span class="metric-pill green" title="Healthy Active Pods">
+          <span class="pill-dot"></span> <span class="pill-label">Running:</span> <strong id="healthy-count">36</strong>
+        </span>
+        <span class="metric-pill yellow" title="Warning High CPU & Crash Loops">
+          <span class="pill-dot"></span> <span class="pill-label">Warning:</span> <strong id="warning-count">0</strong>
+        </span>
+        <span class="metric-pill red" title="Deadlocked Critical Pods">
+          <span class="pill-dot"></span> <span class="pill-label">Crashed:</span> <strong id="critical-count">0</strong>
+        </span>
+      </div>
+      <div class="widget-sub">Each crashed pod drains 5%/s health</div>
     </div>
   </div>
 
-  <!-- MAIN WORKSPACE -->
-  <main>
-    <!-- LEFT SIDEBAR: SRE TOOLKIT -->
+  <!-- MAIN SRE WAR ROOM WORKSPACE -->
+  <main class="sre-workspace">
+    <!-- LEFT SIDEBAR: SRE TOOLKIT & RUNBOOK -->
     <aside class="left-sidebar">
-      <div class="panel-card">
-        <h3>🛠️ SRE Action Panel</h3>
-
-        <!-- Draggable Load Balancer -->
-        <div id="load-balancer-tool" class="tool-item" draggable="true" title="Drag and drop onto yellow pods to offload traffic">
-          <div class="tool-icon">⚖️</div>
-          <div class="tool-info">
-            <div class="tool-name">Load Balancer</div>
-            <div class="tool-desc">Drag onto Yellow Pod to offload</div>
-          </div>
+      <!-- Interactive Remediation Tools -->
+      <div class="panel-card toolkit-card">
+        <div class="panel-header">
+          <span class="panel-icon">🛠️</span>
+          <h3>REMEDIATION TOOLKIT</h3>
         </div>
 
-        <!-- Autoscaler Button -->
-        <button id="autoscaler-btn" class="action-btn-large" title="Scale up all warning pods immediately (20s cooldown)">
-          <span>⚡ Autoscaler</span>
-          <span class="kbd-badge">[A]</span>
+        <!-- Draggable Ingress Load Balancer -->
+        <div id="load-balancer-tool" class="tool-item" draggable="true" title="Drag and drop onto warning pods to offload traffic immediately">
+          <div class="tool-icon">⚖️</div>
+          <div class="tool-info">
+            <div class="tool-name">Ingress Load Balancer</div>
+            <div class="tool-desc">Drag onto yellow pods to offload traffic</div>
+          </div>
+          <span class="tool-drag-badge">DRAG</span>
+        </div>
+
+        <!-- Horizontal Pod Autoscaler Button -->
+        <button id="autoscaler-btn" class="action-btn-large" title="Autoscale and immediately remediate all warning pods (Key [A])">
+          <div class="btn-top-row">
+            <span class="hpa-icon">⚡</span>
+            <span class="btn-label">Autoscaler Sweep</span>
+            <span class="kbd-badge">[A]</span>
+          </div>
+          <div class="btn-subtext">Scales up all yellow &amp; loop pods</div>
           <div id="autoscaler-cooldown-bar" class="cooldown-overlay"></div>
         </button>
       </div>
 
-      <!-- Quick Controls Guide -->
-      <div class="panel-card">
-        <h3>📋 Incident Protocols</h3>
+      <!-- SRE Incident Playbook -->
+      <div class="panel-card playbook-card">
+        <div class="panel-header">
+          <span class="panel-icon">📋</span>
+          <h3>INCIDENT RUNBOOK</h3>
+        </div>
         <div class="control-guide">
           <div class="control-row">
-            <span>High CPU (⚠️):</span>
+            <span class="incident-badge yellow">⚠️ High CPU</span>
             <span class="kbd-badge">Hover + S</span>
           </div>
           <div class="control-row">
-            <span>Crash Loop (🔄):</span>
+            <span class="incident-badge orange">🔄 CrashLoop</span>
             <span class="kbd-badge">Hover + S / Balancer</span>
           </div>
           <div class="control-row">
-            <span>Offload Traffic:</span>
-            <span class="kbd-badge">Drag Balancer</span>
+            <span class="incident-badge red">🔥 Deadlock</span>
+            <span class="kbd-badge">Hold Click 1s</span>
           </div>
           <div class="control-row">
-            <span>Hard Reboot Red Pod:</span>
-            <span class="kbd-badge">Hold Click 1.5s</span>
-          </div>
-          <div class="control-row">
-            <span>Terminal Emergency Fix:</span>
+            <span class="incident-badge terminal">💻 Kubectl Fix</span>
             <span class="kbd-badge">Double-Click</span>
           </div>
           <div class="control-row">
-            <span>Autoscale All Yellow:</span>
-            <span class="kbd-badge">Key [A]</span>
+            <span class="incident-badge cyan">👻 Ghost Pod</span>
+            <span class="penalty-tag">DO NOT TOUCH (-150)</span>
           </div>
           <div class="control-row">
-            <span>Ghost Pods (False Alarm):</span>
-            <span style="color: var(--neon-cyan); font-weight:700;">DO NOT TOUCH</span>
-          </div>
-          <div class="control-row">
-            <span>Wrong Action Penalty:</span>
-            <span style="color: #f87171;">-25 PTS</span>
+            <span class="incident-badge penalty">🚫 Misfire</span>
+            <span class="penalty-tag">-25 PTS</span>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- CENTER: 6x6 KUBERNETES POD ARENA -->
+    <!-- CENTER ARENA: 6x6 KUBERNETES POD CLUSTER -->
     <section class="arena-container">
       <div class="arena-header">
         <div class="arena-title">
-          <span>☸️ PRODUCTION CLUSTER</span>
-          <span style="color: var(--text-dim); font-size: 0.72rem;">(36 Managed Pods)</span>
+          <span class="k8s-icon-inline">☸️</span>
+          <span>PRODUCTION KUBERNETES CLUSTER</span>
+          <span class="arena-ns-badge">NAMESPACE: DEFAULT</span>
         </div>
-        <div class="cluster-metrics">
-          <span>Target SLA: <strong>99.9%</strong></span>
+        <div class="arena-metrics">
+          <span class="sla-target-pill">Target SLA: <strong>99.9%</strong></span>
         </div>
       </div>
 
-      <div id="pod-grid" class="pod-grid">
-        <!-- 36 Pod elements generated dynamically by game.js -->
+      <!-- 6x6 Pod Grid (36 Node Pods generated by game.js) -->
+      <div id="pod-grid" class="pod-grid"></div>
+
+      <!-- Arena Status Legend -->
+      <div class="arena-footer-legend">
+        <span class="legend-item"><span class="legend-dot green"></span> Running [200 OK]</span>
+        <span class="legend-item"><span class="legend-dot yellow"></span> High CPU [Scale: S]</span>
+        <span class="legend-item"><span class="legend-dot orange"></span> CrashLoopBackOff [Loop]</span>
+        <span class="legend-item"><span class="legend-dot red"></span> Deadlocked [Reboot: Hold]</span>
+        <span class="legend-item"><span class="legend-dot cyan"></span> Ghost Pod [Ignore]</span>
       </div>
     </section>
 
-    <!-- RIGHT SIDEBAR: SRE LOG & MINI LEADERBOARD -->
+    <!-- RIGHT SIDEBAR: OBSERVABILITY LOG & LEADERBOARD -->
     <aside class="right-sidebar">
-      <div class="panel-card" style="display: flex; flex-direction: column; height: 320px;">
-        <h3>📡 Cluster Event Log</h3>
+      <!-- Live kubectl cluster log -->
+      <div class="panel-card log-panel">
+        <div class="panel-header">
+          <span class="panel-icon">📡</span>
+          <h3>CLUSTER EVENT STREAM</h3>
+        </div>
         <div id="event-log" class="event-log-container">
           <!-- Live events logged here -->
         </div>
       </div>
 
-      <div class="panel-card">
-        <h3>🏆 Local Top Operators</h3>
+      <!-- Leaderboard Mini Preview -->
+      <div class="panel-card leader-panel">
+        <div class="panel-header">
+          <span class="panel-icon">🏆</span>
+          <h3>TOP CLUSTER OPERATORS</h3>
+        </div>
         <div id="side-leaderboard-list" class="leaderboard-preview-list">
-          <div style="color: var(--text-dim); font-size: 0.75rem;">Loading scores...</div>
+          <div class="loading-state">Syncing live scores...</div>
         </div>
       </div>
     </aside>
   </main>
 
-  <!-- MINI TERMINAL MODAL (Double click on red pod) -->
+  <!-- EMERGENCY KUBECTL TERMINAL MODAL (Double-click on Critical Pod) -->
   <div id="terminal-overlay" class="terminal-overlay">
     <div class="terminal-box">
       <div class="terminal-topbar">
@@ -224,20 +289,20 @@
           <span class="term-dot dot-yellow"></span>
           <span class="term-dot dot-green"></span>
         </div>
-        <span class="terminal-title">EMERGENCY KUBERNETES TERMINAL (BASH v5.2)</span>
-        <button id="terminal-close-btn" class="icon-btn" style="padding: 2px 6px;">✕</button>
+        <span class="terminal-title">sre@k8s-prod-us-east-1:~# kubectl (BASH v5.2)</span>
+        <button id="terminal-close-btn" class="icon-btn" title="Close Terminal (ESC)">✕</button>
       </div>
       <div class="terminal-body">
         <div class="term-log">
-          <div>[CRITICAL K8S ALERT] Pod deadlocked with exit code 137.</div>
-          <div>Target Node: <strong id="terminal-target-label" style="color: var(--neon-red);">pod-01</strong></div>
-          <div style="color: var(--neon-yellow); margin-top: 4px;">Execute 'kill' or 'fix' to force pod remediation:</div>
+          <div class="term-line alert-line">[CRITICAL ALERT] Pod deadlocked with exit code 137 (OOMKilled / Crash).</div>
+          <div class="term-line">Target Container: <strong id="terminal-target-label" style="color: var(--neon-red);">pod-01</strong></div>
+          <div class="term-line hint-line">Execute command 'kill', 'fix', 'patch', or 'rollback' to remediate:</div>
         </div>
         <div class="term-cmd-row">
           <span class="term-prompt">k8s-sre&gt;</span>
           <input type="text" id="terminal-input" class="term-input" placeholder="type 'kill' or 'fix' and hit enter" autocomplete="off" spellcheck="false">
         </div>
-        <!-- Quick execution buttons for fast clicking -->
+        <!-- Fast remediation action buttons -->
         <div class="quick-commands-row">
           <span class="quick-cmd-label">FAST REMEDIATION:</span>
           <button type="button" class="quick-cmd-btn" data-cmd="kill">kill -9</button>
@@ -250,20 +315,25 @@
     </div>
   </div>
 
-  <!-- PRE-GAME START MODAL -->
+  <!-- PRE-GAME DEPLOYMENT INITIALIZER MODAL -->
   <div id="start-modal" class="modal-backdrop">
     <div class="modal-card start-modal-card">
-      <div class="start-header-badge">☸️ TECHVERSE // SRE ARENA</div>
+      <div class="modal-top-tag">☸️ KUBERNETES SRE TOURNAMENT // TECHVERSE</div>
       <h2 class="start-title">SERVER SNIPER</h2>
-      <div class="modal-sub">CHAOS EDITION <span class="cyan-divider">//</span> KUBERNETES SRE TRIAGE SIMULATOR</div>
+      <div class="modal-sub">CHAOS EDITION <span class="cyan-divider">//</span> SRE INCIDENT RESPONSE SIMULATOR</div>
 
+      <!-- Operator Handle Input -->
       <div class="input-group">
         <label for="handle-input" class="input-label">OPERATOR CALLSIGN / HANDLE (3-12 CHARACTERS)</label>
-        <input type="text" id="handle-input" class="cyber-input" placeholder="e.g. ROOT_SNIPER" maxlength="12" autofocus>
+        <div class="input-with-prompt">
+          <span class="input-prompt">sre@k8s:~$</span>
+          <input type="text" id="handle-input" class="cyber-input" placeholder="ROOT_SNIPER" maxlength="12" autofocus>
+        </div>
       </div>
 
+      <!-- Tempo / Round Duration Selection with Animated Symbols -->
       <div class="input-group">
-        <label class="input-label">SHIFT DURATION & TEMPO</label>
+        <label class="input-label">SHIFT DURATION &amp; TEMPO</label>
         <div class="tempo-selector">
           <button type="button" class="tempo-btn" data-sec="30">
             <span class="symbol-anim rocket-pulse">🚀</span> 30s HYPER
@@ -277,17 +347,18 @@
         </div>
       </div>
 
+      <!-- Deploy Button -->
       <button id="start-btn" class="primary-btn">INITIALIZE SHIFT</button>
 
-      <!-- Post-wise Interactive Mission Briefing -->
+      <!-- Post-wise Interactive Incident Runbook Cards -->
       <div class="start-rules-box">
         <div class="rules-header">
           <span class="rules-header-title">INCIDENT DIRECTORY</span>
-          <span class="rules-header-sub">Cluster SLA &gt; 0%</span>
+          <span class="rules-header-sub">Keep Cluster SLA &gt; 0%</span>
         </div>
 
         <div class="rules-posts-grid">
-          <!-- Post 1: Warning & Crash Loops -->
+          <!-- Post 1: High CPU & Crash Loops -->
           <div class="rule-post post-warning" tabindex="0">
             <div class="post-top">
               <span class="post-tag yellow">INCIDENT #01</span>
@@ -296,7 +367,7 @@
             <div class="post-main">
               <span class="post-icon">⚠️</span>
               <div class="post-content">
-                <div class="post-title">High CPU & Crash Loops (🔄)</div>
+                <div class="post-title">High CPU &amp; Crash Loops (🔄)</div>
                 <div class="post-action">Hover pod + press <span class="kbd-badge">S</span> or drag Balancer</div>
               </div>
             </div>
@@ -317,7 +388,7 @@
             </div>
           </div>
 
-          <!-- Post 3: Autoscaler Ability -->
+          <!-- Post 3: Autoscaler Tool -->
           <div class="rule-post post-ability" tabindex="0">
             <div class="post-top">
               <span class="post-tag purple">SRE TOOL</span>
@@ -356,23 +427,25 @@
     </div>
   </div>
 
-  <!-- 3-2-1 COUNTDOWN OVERLAY -->
+  <!-- 3-2-1 DEPLOYMENT COUNTDOWN OVERLAY -->
   <div id="countdown-overlay" class="countdown-overlay">
     <div id="countdown-number" class="countdown-number">3</div>
+    <div class="countdown-sub">CONNECTING TO PRODUCTION CLUSTER...</div>
   </div>
 
-  <!-- POST-GAME RESULT MODAL -->
+  <!-- POST-GAME INCIDENT ROOT-CAUSE ANALYSIS (RCA) MODAL -->
   <div id="result-modal" class="modal-backdrop hidden">
-    <div class="modal-card">
+    <div class="modal-card result-card">
       <div id="result-rank-badge" class="result-rank-badge">RANK S+</div>
       <div id="result-rank-title" class="result-rank-title">LEGENDARY SITE RELIABILITY PRINCIPAL</div>
 
       <h2 id="result-title">SHIFT SURVIVED</h2>
       <div id="result-subtitle" class="modal-sub">60 seconds survived</div>
 
+      <!-- SRE Performance Summary Grid -->
       <div class="stats-summary-grid">
         <div class="summary-stat-box">
-          <div class="summary-stat-label">Final Score</div>
+          <div class="summary-stat-label">Final Uptime Score</div>
           <div id="result-score" class="summary-stat-val">0</div>
         </div>
         <div class="summary-stat-box">
@@ -388,14 +461,14 @@
           <div id="result-crash-loops" class="summary-stat-val">0</div>
         </div>
         <div class="summary-stat-box">
-          <div class="summary-stat-label">Mean Time to Recovery</div>
+          <div class="summary-stat-label">MTTR (Mean Time to Recovery)</div>
           <div id="result-mttr" class="summary-stat-val">0.0s</div>
         </div>
         <div class="summary-stat-box">
-          <div class="summary-stat-label">Longest Combo</div>
+          <div class="summary-stat-label">Longest Combo Streak</div>
           <div id="result-combo" class="summary-stat-val">0x</div>
         </div>
-        <div class="summary-stat-box" style="grid-column: span 2;">
+        <div class="summary-stat-box full-width">
           <div class="summary-stat-label">Peak SLA Uptime</div>
           <div id="result-uptime" class="summary-stat-val">100%</div>
         </div>
@@ -403,16 +476,16 @@
 
       <div id="sync-status-badge" class="sync-status-badge">Checking database status...</div>
 
-      <h3 style="font-size: 0.85rem; color: var(--neon-cyan); margin-bottom: 8px; text-transform: uppercase;">
-        Shift Leaderboard
-      </h3>
-      <div id="result-leaderboard-list" class="leaderboard-preview-list" style="margin-bottom: 20px;">
-        <!-- Top 5 scores populated dynamically -->
+      <h3 class="leaderboard-heading">Shift Hall of Fame</h3>
+      <div id="result-leaderboard-list" class="leaderboard-preview-list">
+        <!-- Dynamic leaderboard rows -->
       </div>
 
       <div class="modal-actions-row">
         <button id="restart-btn" class="primary-btn">START NEXT SHIFT</button>
-        <button id="copy-report-btn" type="button" class="secondary-btn" title="Copy incident post-mortem markdown report to clipboard">📋 COPY POST-MORTEM</button>
+        <button id="copy-report-btn" type="button" class="secondary-btn" title="Copy incident post-mortem markdown report to clipboard">
+          📋 COPY POST-MORTEM RCA
+        </button>
       </div>
     </div>
   </div>
@@ -427,4 +500,3 @@
   <script src="game.js"></script>
 </body>
 </html>
-

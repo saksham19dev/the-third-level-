@@ -131,21 +131,23 @@
     }
   }
 
-  // --- INTERACTIVE DYNAMIC BACKGROUND (MOUSE PARTICLES & ENERGY MESH) ---
+  // --- INTERACTIVE DEVOPS KUBERNETES TOPOLOGY BACKGROUND ENGINE ---
   class InteractiveBackground {
     constructor() {
       this.canvas = document.getElementById('interactive-bg');
       this.glow = document.getElementById('cursor-glow');
       if (!this.canvas) return;
       this.ctx = this.canvas.getContext('2d');
-      this.particles = [];
-      this.sparks = [];
+      this.nodes = [];
+      this.packets = [];
+      this.ripples = [];
       this.mouse = { x: -1000, y: -1000, active: false };
-      this.colors = ['#00e5ff', '#b537f2', '#00ff88', '#ffc400'];
-      this.numParticles = 50;
+      this.nodeLabels = ['api-server', 'etcd-cluster', 'kube-controller', 'ingress-nginx', 'worker-alpha', 'worker-beta', 'worker-gamma', 'worker-delta', 'prometheus', 'grafana'];
+      this.colors = ['#38bdf8', '#818cf8', '#34d399', '#fbbf24', '#c084fc'];
+      this.numNodes = 45;
 
       this.resize();
-      this.createParticles();
+      this.createClusterNodes();
       this.bindEvents();
       this.animate = this.animate.bind(this);
       requestAnimationFrame(this.animate);
@@ -158,17 +160,33 @@
       this.canvas.height = this.height;
     }
 
-    createParticles() {
-      this.particles = [];
-      for (let i = 0; i < this.numParticles; i++) {
-        this.particles.push({
+    createClusterNodes() {
+      this.nodes = [];
+      for (let i = 0; i < this.numNodes; i++) {
+        const isMaster = i === 0;
+        this.nodes.push({
           x: Math.random() * this.width,
           y: Math.random() * this.height,
-          vx: (Math.random() - 0.5) * 0.7,
-          vy: (Math.random() - 0.5) * 0.7,
-          radius: Math.random() * 2 + 1.2,
-          color: this.colors[Math.floor(Math.random() * this.colors.length)],
-          baseAlpha: Math.random() * 0.4 + 0.3
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          radius: isMaster ? 5 : Math.random() * 2.5 + 2,
+          isMaster,
+          label: i < this.nodeLabels.length ? this.nodeLabels[i] : null,
+          color: isMaster ? '#00f0ff' : this.colors[Math.floor(Math.random() * this.colors.length)],
+          baseAlpha: isMaster ? 0.8 : Math.random() * 0.4 + 0.35,
+          pulse: Math.random() * Math.PI * 2
+        });
+      }
+
+      // Initialize data packets
+      this.packets = [];
+      for (let i = 0; i < 20; i++) {
+        this.packets.push({
+          from: Math.floor(Math.random() * this.numNodes),
+          to: Math.floor(Math.random() * this.numNodes),
+          progress: Math.random(),
+          speed: Math.random() * 0.008 + 0.004,
+          color: this.colors[Math.floor(Math.random() * this.colors.length)]
         });
       }
     }
@@ -176,7 +194,7 @@
     bindEvents() {
       window.addEventListener('resize', () => {
         this.resize();
-        this.createParticles();
+        this.createClusterNodes();
       });
 
       window.addEventListener('mousemove', (e) => {
@@ -196,101 +214,121 @@
       });
 
       window.addEventListener('click', (e) => {
-        this.spawnSparks(e.clientX, e.clientY);
-      });
-    }
-
-    spawnSparks(x, y) {
-      for (let i = 0; i < 12; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 3 + 1.5;
-        this.sparks.push({
-          x, y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          radius: Math.random() * 2.5 + 1.5,
-          color: this.colors[Math.floor(Math.random() * this.colors.length)],
-          life: 1.0,
-          decay: Math.random() * 0.03 + 0.02
+        this.ripples.push({
+          x: e.clientX,
+          y: e.clientY,
+          radius: 10,
+          maxRadius: 180,
+          alpha: 0.85
         });
-      }
+      });
     }
 
     animate() {
       this.ctx.clearRect(0, 0, this.width, this.height);
 
-      // 1. Draw and update particles
-      for (let i = 0; i < this.particles.length; i++) {
-        const p = this.particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Bounce bounds
-        if (p.x < 0 || p.x > this.width) p.vx *= -1;
-        if (p.y < 0 || p.y > this.height) p.vy *= -1;
-
-        // Mouse interactive reaction (subtle magnetic interaction)
-        if (this.mouse.active) {
-          const dx = this.mouse.x - p.x;
-          const dy = this.mouse.y - p.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 160) {
-            // Interactive glowing connection line to cursor
-            const alpha = (1 - dist / 160) * 0.65;
-            this.ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
-            this.ctx.lineWidth = 1;
+      // 1. Draw Network Connections between cluster nodes
+      for (let i = 0; i < this.nodes.length; i++) {
+        for (let j = i + 1; j < this.nodes.length; j++) {
+          const n1 = this.nodes[i];
+          const n2 = this.nodes[j];
+          const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+          if (dist < 130) {
+            const alpha = (1 - dist / 130) * 0.22;
+            this.ctx.strokeStyle = `rgba(56, 189, 248, ${alpha})`;
+            this.ctx.lineWidth = 0.8;
             this.ctx.beginPath();
-            this.ctx.moveTo(p.x, p.y);
+            this.ctx.moveTo(n1.x, n1.y);
+            this.ctx.lineTo(n2.x, n2.y);
+            this.ctx.stroke();
+          }
+        }
+      }
+
+      // 2. Animate Data Packets along cluster connections
+      for (let i = 0; i < this.packets.length; i++) {
+        const pkt = this.packets[i];
+        pkt.progress += pkt.speed;
+        if (pkt.progress >= 1) {
+          pkt.progress = 0;
+          pkt.from = Math.floor(Math.random() * this.nodes.length);
+          pkt.to = Math.floor(Math.random() * this.nodes.length);
+        }
+        const n1 = this.nodes[pkt.from];
+        const n2 = this.nodes[pkt.to];
+        if (n1 && n2 && Math.hypot(n1.x - n2.x, n1.y - n2.y) < 140) {
+          const px = n1.x + (n2.x - n1.x) * pkt.progress;
+          const py = n1.y + (n2.y - n1.y) * pkt.progress;
+          this.ctx.fillStyle = pkt.color;
+          this.ctx.shadowColor = pkt.color;
+          this.ctx.shadowBlur = 6;
+          this.ctx.beginPath();
+          this.ctx.arc(px, py, 2, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.shadowBlur = 0;
+        }
+      }
+
+      // 3. Update & Draw Cluster Nodes
+      for (let i = 0; i < this.nodes.length; i++) {
+        const n = this.nodes[i];
+        n.x += n.vx;
+        n.y += n.vy;
+        n.pulse += 0.04;
+
+        if (n.x < 0 || n.x > this.width) n.vx *= -1;
+        if (n.y < 0 || n.y > this.height) n.vy *= -1;
+
+        // Interactive mouse connection beam
+        if (this.mouse.active) {
+          const dx = this.mouse.x - n.x;
+          const dy = this.mouse.y - n.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 170) {
+            const alpha = (1 - dist / 170) * 0.7;
+            this.ctx.strokeStyle = `rgba(0, 240, 255, ${alpha})`;
+            this.ctx.lineWidth = 1.2;
+            this.ctx.beginPath();
+            this.ctx.moveTo(n.x, n.y);
             this.ctx.lineTo(this.mouse.x, this.mouse.y);
             this.ctx.stroke();
 
-            // Gentle drift toward mouse
-            p.x += (dx / dist) * 0.35;
-            p.y += (dy / dist) * 0.35;
+            // Draw micro telemetry status tag on hover
+            if (dist < 90 && n.label) {
+              this.ctx.fillStyle = 'rgba(14, 25, 52, 0.85)';
+              this.ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+              this.ctx.fillRect(n.x + 8, n.y - 12, 85, 18);
+              this.ctx.strokeRect(n.x + 8, n.y - 12, 85, 18);
+              this.ctx.fillStyle = '#38bdf8';
+              this.ctx.font = '9px monospace';
+              this.ctx.fillText(`${n.label} [OK]`, n.x + 12, n.y);
+            }
           }
         }
 
-        // Draw particle dot with glow
-        this.ctx.fillStyle = p.color;
-        this.ctx.globalAlpha = p.baseAlpha;
+        // Draw node circle with heartbeat pulse
+        const pulseFactor = 1 + Math.sin(n.pulse) * 0.15;
+        this.ctx.fillStyle = n.color;
+        this.ctx.globalAlpha = n.baseAlpha;
         this.ctx.beginPath();
-        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        this.ctx.arc(n.x, n.y, n.radius * pulseFactor, 0, Math.PI * 2);
         this.ctx.fill();
       }
 
-      // 2. Draw connections between close nodes
-      for (let i = 0; i < this.particles.length; i++) {
-        for (let j = i + 1; j < this.particles.length; j++) {
-          const p1 = this.particles[i];
-          const p2 = this.particles[j];
-          const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-          if (dist < 110) {
-            const alpha = (1 - dist / 110) * 0.22;
-            this.ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
-            this.ctx.lineWidth = 0.8;
-            this.ctx.beginPath();
-            this.ctx.moveTo(p1.x, p1.y);
-            this.ctx.lineTo(p2.x, p2.y);
-            this.ctx.stroke();
-          }
-        }
-      }
-
-      // 3. Draw & update click sparks
-      for (let i = this.sparks.length - 1; i >= 0; i--) {
-        const s = this.sparks[i];
-        s.x += s.vx;
-        s.y += s.vy;
-        s.life -= s.decay;
-        if (s.life <= 0) {
-          this.sparks.splice(i, 1);
+      // 4. Update & Draw Click Ping Ripples
+      for (let i = this.ripples.length - 1; i >= 0; i--) {
+        const r = this.ripples[i];
+        r.radius += 3.5;
+        r.alpha -= 0.02;
+        if (r.alpha <= 0 || r.radius >= r.maxRadius) {
+          this.ripples.splice(i, 1);
           continue;
         }
-        this.ctx.fillStyle = s.color;
-        this.ctx.globalAlpha = s.life;
+        this.ctx.strokeStyle = `rgba(56, 189, 248, ${r.alpha})`;
+        this.ctx.lineWidth = 1.5;
         this.ctx.beginPath();
-        this.ctx.arc(s.x, s.y, s.radius * s.life, 0, Math.PI * 2);
-        this.ctx.fill();
+        this.ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+        this.ctx.stroke();
       }
 
       this.ctx.globalAlpha = 1.0;
